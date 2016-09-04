@@ -4,8 +4,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import org.graphstream.algorithm.ConnectedComponents;
 import org.graphstream.algorithm.Dijkstra;
 import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.*;
@@ -58,28 +60,44 @@ public class Proyecto3 {
             n.addAttribute("label", n.getId());
         }
         graph.display(true);
+        int op;
+        do {
+            op = Integer.parseInt(JOptionPane.showInputDialog(null, "1.Ver si son amigos\n2.Camino mas corto a un amigo\nCualquier otro para salir\nIngrese una opcion:"));
 
-        int op = Integer.parseInt(JOptionPane.showInputDialog(null, "1.Ver si son amigos\n2.Camino mas corto a un amigo\nCualquier otro para salir\nIngrese una opcion:"));
-
-        switch (op) {
-            case 1:
-                
-                break;
-            case 2:
-                String nombre1 = JOptionPane.showInputDialog(null, "Ingrese de donde quiere comenzar");
-                String nombre2 = JOptionPane.showInputDialog(null, "Ingrese hasta donde quiere llegar, para mostrar el camino de esas personas.");
-                Dijkstra dijkstra = new Dijkstra(Dijkstra.Element.EDGE, null, "length");
-                dijkstra.init(graph);
-                dijkstra.setSource(graph.getNode(nombre1));
-                dijkstra.compute();
-                JOptionPane.showMessageDialog(null, dijkstra.getPath(graph.getNode(nombre2)));
-                //System.out.println(dijkstra.getPath(graph.getNode("rafael")));
-                break;
-            default:
-                JOptionPane.showMessageDialog(null, "Gracias por utilizar este programa");
-                System.exit(0);
-                break;
-        }
+            switch (op) {
+                case 1:
+                    String nombres1 = JOptionPane.showInputDialog(null, "Ingrese el nombre de la primera persona");
+                    String nombres2 = JOptionPane.showInputDialog(null, "Ingrese el nombre de la segunda persona para ver si son amigos.");
+                    Dijkstra dijkstras = new Dijkstra(Dijkstra.Element.EDGE, null, "length");
+                    dijkstras.init(graph);
+                    dijkstras.setSource(graph.getNode(nombres1));
+                    dijkstras.compute();
+                    List<Node> list1 = new ArrayList<Node>();
+                    for (Node node : dijkstras.getPathNodes(graph.getNode(nombres2))) {
+                        list1.add(0, node);
+                    }
+                    if (list1.size() == 2) {
+                        JOptionPane.showMessageDialog(null, "Son amigos");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "No son amigos :(");
+                    }
+                    break;
+                case 2:
+                    String nombre1 = JOptionPane.showInputDialog(null, "Ingrese de donde quiere comenzar");
+                    String nombre2 = JOptionPane.showInputDialog(null, "Ingrese hasta donde quiere llegar, para mostrar el camino de esas personas.");
+                    Dijkstra dijkstra = new Dijkstra(Dijkstra.Element.EDGE, null, "length");
+                    dijkstra.init(graph);
+                    dijkstra.setSource(graph.getNode(nombre1));
+                    dijkstra.compute();
+                    JOptionPane.showMessageDialog(null, dijkstra.getPath(graph.getNode(nombre2)));
+                    dijkstra.clear();
+                    break;
+                default:
+                    JOptionPane.showMessageDialog(null, "Gracias por utilizar este programa");
+                    System.exit(0);
+                    break;
+            }
+        } while (op == 1 || op == 2);
     }
 
     public static String[] nombres(String nombres) {
